@@ -1,17 +1,19 @@
 from flask import Flask, request, jsonify
-from bs4 import BeautifulSoup
+from flask_cors import CORS
 import requests
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
+CORS(app)
 
-@app.route("/predict", methods=["GET"])
+@app.route("/", methods=["GET"])
 def predict():
     period = request.args.get("period")
     if not period:
         return jsonify({"error": "No period provided"}), 400
 
     try:
-        response = requests.get("https://www.goaok.com/wingo1min")
+        response = requests.get("https://www.goaok.com/games/wingo")
         soup = BeautifulSoup(response.text, "html.parser")
 
         rows = soup.select("table tr")[1:6]
@@ -23,7 +25,7 @@ def predict():
                 bs = cols[2].text.strip()
                 last_results.append((number, bs))
 
-        big_count = sum(1 for _, bs in last_results if bs == "Big")
+        big_count = sum(1 for _, bs in last_results if bs.lower() == "big")
         small_count = 5 - big_count
 
         if big_count > small_count:
