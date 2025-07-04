@@ -5,7 +5,9 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 CORS(app)
-
+@app.route("/")
+def home():
+    return "Wingo Prediction Backend is running!"
 @app.route("/predict", methods=["GET"])
 def predict():
     period = request.args.get("period")
