@@ -6,14 +6,14 @@ from bs4 import BeautifulSoup
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/", methods=["GET"])
+@app.route("/predict", methods=["GET"])
 def predict():
     period = request.args.get("period")
     if not period:
         return jsonify({"error": "No period provided"}), 400
 
     try:
-        response = requests.get("https://www.goaok.com/games/wingo")
+        response = requests.get("https://www.goaok.com/pc.php?game=win1min")
         soup = BeautifulSoup(response.text, "html.parser")
 
         rows = soup.select("table tr")[1:6]
@@ -25,7 +25,7 @@ def predict():
                 bs = cols[2].text.strip()
                 last_results.append((number, bs))
 
-        big_count = sum(1 for _, bs in last_results if bs.lower() == "big")
+        big_count = sum(1 for _, bs in last_results if bs == "Big")
         small_count = 5 - big_count
 
         if big_count > small_count:
@@ -43,6 +43,7 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
