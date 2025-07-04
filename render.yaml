@@ -2,6 +2,7 @@ services:
   - type: web
     name: goagame-backend
     env: python
-    plan: free
     buildCommand: ""
     startCommand: "python app.py"
+    plan: free
+    autoDeploy: true
